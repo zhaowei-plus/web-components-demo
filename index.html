@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Web Components Demo</title>
+    <link rel="import" href="./components/Table/index.html"/>
+</head>
+
+<body>
+  <a href="https://xy-ui.codelabo.cn/docs/#/xy-date-picker">xy-date-picker组件库</a>
+  
+  <fc-table id="fcTable"></fc-table>
+
+  <fc-dialog></fc-dialog>
+
+  <script src="./components/Table/index.js"></script>
+  <script src="./components/Dialog/index.js"></script>
+  <script>
+    const columns = [
+      {
+        key: 'name',
+        title: '用户名'
+      },
+      {
+        key: 'age',
+        title: '年龄'
+      },
+      {
+        key: 'sex',
+        title: '性别'
+      },
+      {
+        key: 'actions',
+        title: '操作',
+        width: 180,
+      }
+    ]
+
+    const actions = [
+      {
+        title: '删除',
+        type: 'delete',
+      }, 
+      {
+        title: '查看',
+        type: 'detail'
+      }
+    ]
+
+    let data = new Array(10).fill(0).map((v, k) => 
+    ({ id: k, name: `张三${k}`, age: 18, sex: k%2 }))
+
+    const onActions = (type, record, index) => {
+      console.log('onActions:', onActions)
+    }
+
+    const onDelete = (record) => {
+      console.log('onDelete:', record)
+      onRefresh(data.filter(item => item.id !== record.id))
+    }
+
+    const onDetail = (record) => {
+      console.log('onDetail:', record)
+    }
+
+    const onRefresh = (_data) => {
+      console.log('onRefresh data:', _data)
+      data = _data
+      fcTable.setAttribute('data', JSON.stringify(_data))
+    }
+
+    const fcTableInit = () => {
+      fcTable.setAttribute('columns', JSON.stringify(columns))
+      fcTable.setAttribute('actions', JSON.stringify(actions))
+    }
+
+    // setTimeout(() => {
+    //   const data = new Array(10).fill(0).map((v, k) => ({ id: k, name: `李四${k}`, age: 18, sex: k%2 }))
+    //   onRefresh(data)
+    // }, 5000) 
+
+    fcTable.addEventListener('onActions', event => {
+      const { type, record } = event.detail
+      if (type === 'delete') {
+        onDelete(record)
+      }
+
+      if (type === 'detail') {
+        onDetail(record)
+      }
+    })
+
+    const fcTableOperatorCallback = (record, index) => {
+      console.log('fcTableOperatorCallback:', record, index)
+    }
+
+    fcTableInit()
+    onRefresh(data)
+    
+  </script>
+</body>
+
+</html>
